@@ -1614,6 +1614,36 @@
         .video-wrapper{
   position: relative;
 }
+
+        /* Overlay que cobre o vídeo inteiro (pra clicar e dar play/pause) */
+.vimeo-toggle{
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* ajuda a não travar o swipe do carrossel no mobile */
+  touch-action: pan-x pan-y;
+}
+
+/* O seu botão brilhante fica no centro (mas quem recebe clique é o overlay) */
+.vimeo-toggle .vimeo-play{
+  pointer-events: none; /* clique vai para o overlay */
+}
+
+/* Quando estiver tocando: esconde o botão brilhante, mas mantém o overlay ativo (pra pausar) */
+.video-wrapper.is-playing .vimeo-play{
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity .2s ease, transform .2s ease;
+}
   
     </style>
 </head>
@@ -1837,8 +1867,8 @@
     </section>
 
 <!-- =========================
-     VÍDEOS (VIMEO) – seção completa (do zero)
-     Play central personalizado + toca COM SOM no clique
+     VÍDEOS (VIMEO)
+     Clique em qualquer lugar do vídeo = PLAY / clique de novo = PAUSE
      Sem título/autor e sem controles do Vimeo
 ========================= -->
 <section class="videos section" id="videos">
@@ -1859,8 +1889,11 @@
             allowfullscreen
             title="História da Jeniffer"></iframe>
 
-          <button class="vimeo-play" type="button" aria-label="Reproduzir vídeo">
-            <span class="vimeo-play__icon"></span>
+          <!-- Overlay clicável (cobre o vídeo todo) -->
+          <button class="vimeo-toggle" type="button" aria-label="Play/Pause">
+            <span class="vimeo-play">
+              <span class="vimeo-play__icon"></span>
+            </span>
           </button>
         </div>
       </div>
@@ -1874,8 +1907,11 @@
             allowfullscreen
             title="Trabalho na prática"></iframe>
 
-          <button class="vimeo-play" type="button" aria-label="Reproduzir vídeo">
-            <span class="vimeo-play__icon"></span>
+          <!-- Overlay clicável (cobre o vídeo todo) -->
+          <button class="vimeo-toggle" type="button" aria-label="Play/Pause">
+            <span class="vimeo-play">
+              <span class="vimeo-play__icon"></span>
+            </span>
           </button>
         </div>
       </div>
@@ -1889,8 +1925,11 @@
             allowfullscreen
             title="Agende seu momento"></iframe>
 
-          <button class="vimeo-play" type="button" aria-label="Reproduzir vídeo">
-            <span class="vimeo-play__icon"></span>
+          <!-- Overlay clicável (cobre o vídeo todo) -->
+          <button class="vimeo-toggle" type="button" aria-label="Play/Pause">
+            <span class="vimeo-play">
+              <span class="vimeo-play__icon"></span>
+            </span>
           </button>
         </div>
       </div>
@@ -2234,45 +2273,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
   wraps.forEach((wrap) => {
     const iframe = wrap.querySelector('iframe');
-    const btn = wrap.querySelector('.vimeo-play');
-    if (!iframe || !btn) return;
+    const overlay = wrap.querySelector('.vimeo-toggle');
+    if (!iframe || !overlay) return;
 
     const player = new Vimeo.Player(iframe);
 
-    // Toggle Play/Pause no clique
-    btn.addEventListener('click', async () => {
+    // evita disparar play/pause quando a pessoa estiver arrastando (swipe)
+    let startX = 0, startY = 0;
+
+    overlay.addEventListener('pointerdown', (e) => {
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+
+    overlay.addEventListener('pointerup', async (e) => {
+      const dx = Math.abs(e.clientX - startX);
+      const dy = Math.abs(e.clientY - startY);
+      if (dx > 10 || dy > 10) return; // foi swipe/arrasto, não toggle
+
       try {
         const paused = await player.getPaused();
 
         if (paused) {
-          // pausa os outros vídeos (opcional)
+          // (opcional) pausa os outros vídeos
           wraps.forEach(other => {
             if (other !== wrap) {
               const otherIframe = other.querySelector('iframe');
               if (otherIframe) new Vimeo.Player(otherIframe).pause().catch(()=>{});
+              other.classList.remove('is-playing');
             }
           });
 
-          await player.setMuted(false); // som ligado ao dar play
+          await player.setMuted(false); // liga o som
           await player.setVolume(1);
           await player.play();
-
-          // esconde o botão enquanto toca (se você quiser sempre visível, apaga essa linha)
-          btn.style.display = 'none';
+          wrap.classList.add('is-playing');
         } else {
           await player.pause();
-          // mostra o botão quando pausa
-          btn.style.display = '';
+          wrap.classList.remove('is-playing');
         }
-      } catch (e) {
-        console.log('Erro no toggle play/pause:', e);
+      } catch (err) {
+        console.log(err);
       }
     });
 
-    // Se o usuário pausar por outros meios (atalhos etc), mostra o botão
-    player.on('pause', () => btn.style.display = '');
-    player.on('ended', () => btn.style.display = '');
-    player.on('play', () => btn.style.display = 'none');
+    player.on('pause', () => wrap.classList.remove('is-playing'));
+    player.on('ended', () => wrap.classList.remove('is-playing'));
+    player.on('play',  () => wrap.classList.add('is-playing'));
   });
 });
 </script>
