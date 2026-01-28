@@ -937,74 +937,181 @@
         }
 
         /* ========================================
-           VÍDEOS
-        ======================================== */
-        .videos {
-            background: linear-gradient(180deg, var(--preto) 0%, var(--preto-light) 100%);
-        }
+   VÍDEOS (SEÇÃO COMPLETA) — substitua TODO o bloco antigo de "VÍDEOS"
+   Play central personalizado (classe .vimeo-play)
+======================================== */
 
-        .videos-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
+.videos{
+  background: linear-gradient(180deg, var(--preto) 0%, var(--preto-light) 100%);
+  position: relative;
+}
 
-        .videos-grid {
-            display: flex;
-            gap: 24px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            padding: 10px 0;
-        }
+.videos::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(233, 30, 140, 0.25), transparent);
+}
 
-        .videos-grid::-webkit-scrollbar {
-            display: none;
-        }
+.videos-header{
+  text-align: center;
+  margin-bottom: 50px;
+}
 
-        .video-item {
-            flex-shrink: 0;
-            width: 320px;
-            scroll-snap-align: start;
-            border-radius: 20px;
-            overflow: hidden;
-            background: var(--preto-card);
-            border: 1px solid rgba(233, 30, 140, 0.2);
-            transition: all 0.4s ease;
-        }
+/* Mobile: carrossel horizontal */
+.videos-grid{
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 10px 0;
+}
 
-        .video-item:hover {
-            border-color: var(--rosa);
-            transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(233, 30, 140, 0.2);
-        }
+.videos-grid::-webkit-scrollbar{
+  display: none;
+}
 
-        .video-wrapper {
-            position: relative;
-            padding-bottom: 177.78%;
-            height: 0;
-        }
+.video-item{
+  flex-shrink: 0;
+  width: 320px;
+  scroll-snap-align: start;
 
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+  border-radius: 20px;
+  overflow: hidden;
 
-        @media (min-width: 1000px) {
-            .videos-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                overflow: visible;
-            }
+  background: var(--preto-card);
+  border: 1px solid rgba(233, 30, 140, 0.2);
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
 
-            .video-item {
-                width: 100%;
-            }
-        }
+.video-item:hover{
+  border-color: var(--rosa);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(233, 30, 140, 0.2);
+}
+
+/* Mantém proporção vertical 9:16 (seu layout) */
+.video-wrapper{
+  position: relative;
+  padding-bottom: 177.78%; /* 16/9 = 1.7778 (vídeo vertical) */
+  height: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+/* iframe SEMPRE absoluto (evita “altura 0” e bagunça) */
+.video-wrapper iframe{
+  position: absolute !important;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  z-index: 1;
+}
+
+/* -------- PLAY CENTRAL PERSONALIZADO -------- */
+.vimeo-play{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+
+  width: 86px;
+  height: 86px;
+  border-radius: 999px;
+  border: 0;
+  cursor: pointer;
+
+  /* brilho/metálico com toque rosa (combina com seu tema) */
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.95) 0%,
+    rgba(233,30,140,0.25) 22%,
+    rgba(255,255,255,0.95) 50%,
+    rgba(233,30,140,0.20) 78%,
+    rgba(255,255,255,0.95) 100%
+  );
+
+  box-shadow:
+    0 12px 35px rgba(0,0,0,.35),
+    0 0 26px rgba(233, 30, 140, 0.25);
+
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.vimeo-play:hover{
+  transform: translate(-50%, -50%) scale(1.04);
+  box-shadow:
+    0 16px 45px rgba(0,0,0,.4),
+    0 0 34px rgba(233, 30, 140, 0.35);
+  filter: saturate(1.05);
+}
+
+.vimeo-play:focus-visible{
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgba(233, 30, 140, 0.25),
+    0 16px 45px rgba(0,0,0,.4),
+    0 0 34px rgba(233, 30, 140, 0.35);
+}
+
+/* brilho animado passando */
+.vimeo-play::after{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background: linear-gradient(
+    120deg,
+    transparent 35%,
+    rgba(255,255,255,.9) 50%,
+    transparent 65%
+  );
+  transform: translateX(-60%);
+  animation: vimeoShine 1.6s infinite;
+  pointer-events: none;
+}
+
+@keyframes vimeoShine{
+  0%   { transform: translateX(-60%) rotate(10deg); opacity: .25; }
+  50%  { opacity: .85; }
+  100% { transform: translateX(60%) rotate(10deg); opacity: .25; }
+}
+
+/* ícone play (triângulo) */
+.vimeo-play__icon{
+  position: absolute;
+  left: 53%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border-left: 22px solid #111;
+  border-top: 14px solid transparent;
+  border-bottom: 14px solid transparent;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Desktop: grid 3 colunas */
+@media (min-width: 1000px){
+  .videos-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    overflow: visible;
+  }
+
+  .video-item{
+    width: 100%;
+  }
+}
 
         /* ========================================
            DIFERENCIAIS
@@ -1507,64 +1614,7 @@
         .video-wrapper{
   position: relative;
 }
-
-/* garante que o iframe não fique por cima do botão */
-.video-wrapper iframe{
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-.vimeo-play{
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 5;
-
-  width: 86px;
-  height: 86px;
-  border-radius: 999px;
-  border: 0;
-  cursor: pointer;
-
-  /* “brilhante” */
-  background: linear-gradient(135deg, #ffffff 0%, #cfcfcf 25%, #ffffff 50%, #9a9a9a 75%, #ffffff 100%);
-  box-shadow: 0 12px 35px rgba(0,0,0,.35), 0 0 20px rgba(255,255,255,.35);
-  overflow: hidden;
-}
-
-/* efeito de brilho passando */
-.vimeo-play::after{
-  content:"";
-  position:absolute;
-  inset:-40%;
-  background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.9) 50%, transparent 65%);
-  transform: translateX(-60%);
-  animation: shine 1.6s infinite;
-}
-
-@keyframes shine{
-  0%{ transform: translateX(-60%) rotate(10deg); opacity:.2; }
-  50%{ opacity:.8; }
-  100%{ transform: translateX(60%) rotate(10deg); opacity:.2; }
-}
-
-/* ícone play */
-.vimeo-play__icon{
-  position: absolute;
-  left: 53%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 0; height: 0;
-  border-left: 22px solid #111;
-  border-top: 14px solid transparent;
-  border-bottom: 14px solid transparent;
-  z-index: 2; /* acima do brilho */
-}
-        
+  
     </style>
 </head>
 <body>
@@ -1786,7 +1836,12 @@
         </div>
     </section>
 
-    <section class="videos section" id="videos">
+<!-- =========================
+     VÍDEOS (VIMEO) – seção completa (do zero)
+     Play central personalizado + toca COM SOM no clique
+     Sem título/autor e sem controles do Vimeo
+========================= -->
+<section class="videos section" id="videos">
   <div class="container">
     <div class="videos-header fade-in">
       <span class="section-tag">Nos Bastidores</span>
@@ -1795,54 +1850,48 @@
 
     <div class="videos-grid fade-in fade-delay-1">
 
+      <!-- Vídeo 1 -->
       <div class="video-item">
         <div class="video-wrapper">
           <iframe
-            src="https://player.vimeo.com/video/1159057713?badge=0&autopause=0&title=0&byline=0&portrait=0&controls=1&muted=0"
+            src="https://player.vimeo.com/video/1159057713?badge=0&autopause=0&title=0&byline=0&portrait=0&controls=0&muted=1&playsinline=1"
             allow="autoplay; fullscreen; picture-in-picture"
             allowfullscreen
             title="História da Jeniffer"></iframe>
-            
 
-    <button class="vimeo-play" type="button" aria-label="Reproduzir vídeo">
-      <span class="vimeo-play__icon"></span>
-    </button>
-  </div>
-</div>
+          <button class="vimeo-play" type="button" aria-label="Reproduzir vídeo">
+            <span class="vimeo-play__icon"></span>
+          </button>
         </div>
       </div>
 
+      <!-- Vídeo 2 -->
       <div class="video-item">
         <div class="video-wrapper">
           <iframe
-            src="https://player.vimeo.com/video/1159057736?badge=0&autopause=0&title=0&byline=0&portrait=0&controls=1&muted=0"
+            src="https://player.vimeo.com/video/1159057736?badge=0&autopause=0&title=0&byline=0&portrait=0&controls=0&muted=1&playsinline=1"
             allow="autoplay; fullscreen; picture-in-picture"
             allowfullscreen
             title="Trabalho na prática"></iframe>
-            
 
-    <button class="vimeo-play" type="button" aria-label="Reproduzir vídeo">
-      <span class="vimeo-play__icon"></span>
-    </button>
-  </div>
-</div>
+          <button class="vimeo-play" type="button" aria-label="Reproduzir vídeo">
+            <span class="vimeo-play__icon"></span>
+          </button>
         </div>
       </div>
 
+      <!-- Vídeo 3 -->
       <div class="video-item">
         <div class="video-wrapper">
           <iframe
-            src="https://player.vimeo.com/video/1159057690?badge=0&autopause=0&title=0&byline=0&portrait=0&controls=1&muted=0"
+            src="https://player.vimeo.com/video/1159057690?badge=0&autopause=0&title=0&byline=0&portrait=0&controls=0&muted=1&playsinline=1"
             allow="autoplay; fullscreen; picture-in-picture"
             allowfullscreen
             title="Agende seu momento"></iframe>
-            
 
-    <button class="vimeo-play" type="button" aria-label="Reproduzir vídeo">
-      <span class="vimeo-play__icon"></span>
-    </button>
-  </div>
-</div>
+          <button class="vimeo-play" type="button" aria-label="Reproduzir vídeo">
+            <span class="vimeo-play__icon"></span>
+          </button>
         </div>
       </div>
 
@@ -2181,23 +2230,37 @@
     <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.video-wrapper').forEach((wrap) => {
+  const wraps = document.querySelectorAll('.video-wrapper');
+
+  wraps.forEach((wrap) => {
     const iframe = wrap.querySelector('iframe');
     const btn = wrap.querySelector('.vimeo-play');
+    if (!iframe || !btn) return;
+
     const player = new Vimeo.Player(iframe);
 
     btn.addEventListener('click', async () => {
       try {
-        await player.setVolume(1);     // volume 100%
-        await player.setMuted(false);  // tira o mute
-        await player.play();           // dá play
-        btn.style.display = 'none';    // esconde o botão
+        // pausa os outros vídeos (opcional, ajuda muito)
+        wraps.forEach(other => {
+          if (other !== wrap) {
+            const otherIframe = other.querySelector('iframe');
+            const otherBtn = other.querySelector('.vimeo-play');
+            if (otherIframe) new Vimeo.Player(otherIframe).pause().catch(()=>{});
+            if (otherBtn) otherBtn.style.display = '';
+          }
+        });
+
+        await player.setMuted(false); // liga o som
+        await player.setVolume(1);    // volume 100%
+        await player.play();
+
+        btn.style.display = 'none';
       } catch (e) {
         console.log('Erro ao dar play:', e);
       }
     });
 
-    // se pausar/terminar, volta o botão
     player.on('pause', () => btn.style.display = '');
     player.on('ended', () => btn.style.display = '');
   });
