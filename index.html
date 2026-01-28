@@ -79,7 +79,7 @@
         html {
             scroll-behavior: smooth;
             font-size: 16px;
-            overflow-x: hidden; /* Fix bug lateral scroll */
+            overflow-x: hidden;
         }
 
         body {
@@ -206,7 +206,14 @@
         }
 
         .header-inner { display: flex; align-items: center; justify-content: space-between; }
-        .header-logo img { height: 40px; width: auto; }
+        
+        /* Logo Size */
+        .header-logo img { 
+            height: 75px; 
+            width: auto; 
+            transition: height 0.3s ease;
+        }
+        .header.scrolled .header-logo img { height: 60px; }
 
         .header-nav { display: flex; align-items: center; gap: 32px; }
 
@@ -279,6 +286,7 @@
             }
             .header-nav.active { right: 0; }
             .nav-link { font-size: 1.1rem; padding: 10px 0; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.05); }
+            .header-logo img { height: 55px; }
         }
 
         @media (max-width: 600px) { .header-cta { display: none; } }
@@ -322,6 +330,18 @@
         }
 
         .btn-lg { padding: 18px 40px; font-size: 1.05rem; }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--branco);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--rosa);
+            background: rgba(233, 30, 140, 0.1);
+            color: var(--branco);
+        }
 
         /* ========================================
            HERO
@@ -689,7 +709,7 @@
         }
 
         /* ========================================
-           VÍDEOS (VIMEO CUSTOM)
+           VÍDEOS
         ======================================== */
         .videos {
             background: linear-gradient(180deg, var(--preto) 0%, var(--preto-light) 100%);
@@ -714,13 +734,13 @@
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
-            padding: 10px 24px; /* Padding nas laterais para mobile */
+            padding: 10px 24px;
         }
         .videos-grid::-webkit-scrollbar { display: none; }
 
         .video-item {
             flex-shrink: 0;
-            width: 300px; /* Largura fixa no mobile */
+            width: 300px;
             scroll-snap-align: center;
             border-radius: 20px;
             overflow: hidden;
@@ -767,7 +787,7 @@
             background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(233,30,140,0.25) 100%);
             box-shadow: 0 12px 35px rgba(0,0,0,.35), 0 0 26px rgba(233, 30, 140, 0.25);
             transition: transform 0.2s ease, opacity 0.2s ease;
-            pointer-events: none; /* Deixa o clique passar para o overlay */
+            pointer-events: none; 
         }
 
         .vimeo-play__icon {
@@ -782,7 +802,6 @@
             border-bottom: 12px solid transparent;
         }
 
-        /* Overlay invisível para clique */
         .vimeo-toggle {
             position: absolute;
             inset: 0;
@@ -797,7 +816,6 @@
             touch-action: pan-x pan-y;
         }
 
-        /* Estado tocando */
         .video-wrapper.is-playing .vimeo-play {
             opacity: 0;
             transform: translate(-50%, -50%) scale(0.8);
@@ -871,6 +889,64 @@
 
         @media (max-width: 900px) {
             .diferenciais-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+        }
+        
+        /* ========================================
+           NOVA SEÇÃO: LOCALIZAÇÃO
+        ======================================== */
+        .localizacao { background: var(--preto); }
+        
+        .localizacao-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .local-info {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+        
+        .local-item {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .local-icon {
+            width: 50px; height: 50px;
+            background: var(--preto-card);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .local-icon svg { width: 24px; height: 24px; color: var(--rosa); }
+        
+        .local-text h4 { font-size: 1.1rem; color: var(--branco); margin-bottom: 6px; }
+        .local-text p { color: rgba(255,255,255,0.6); line-height: 1.6; font-size: 0.95rem; }
+        
+        .map-frame {
+            width: 100%;
+            height: 400px;
+            background: var(--preto-card);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            position: relative;
+        }
+        
+        .map-frame iframe {
+            width: 100%; height: 100%;
+            border: 0;
+            /* Filtro opcional para deixar o mapa mais escuro, se quiser remova */
+            filter: grayscale(20%) contrast(1.1); 
+        }
+        
+        @media (max-width: 900px) {
+            .localizacao-grid { grid-template-columns: 1fr; gap: 40px; }
+            .map-frame { height: 300px; order: -1; /* Mapa aparece primeiro no mobile */ }
         }
 
         /* ========================================
@@ -975,7 +1051,7 @@
             padding: 1.5rem;
             opacity: 0; visibility: hidden;
             transition: all 0.3s ease;
-            overflow-y: auto; /* Permite scroll se tela for pequena */
+            overflow-y: auto;
         }
 
         .modal-overlay.active { opacity: 1; visibility: visible; }
@@ -1066,6 +1142,7 @@
                 <a href="#trabalhos" class="nav-link">Trabalhos</a>
                 <a href="#sobre" class="nav-link">Sobre</a>
                 <a href="#videos" class="nav-link">Vídeos</a>
+                <a href="#localizacao" class="nav-link">Local</a>
                 <button onclick="openModal()" class="btn btn-pink header-cta">
                     <span>Agendar Horário</span>
                 </button>
@@ -1297,6 +1374,60 @@
             </div>
         </div>
     </section>
+    
+    <!-- NOVA SEÇÃO: LOCALIZAÇÃO -->
+    <section class="localizacao section" id="localizacao">
+        <div class="container">
+            <div class="diferenciais-header fade-in">
+                <span class="section-tag">Onde Estamos</span>
+                <h2 class="section-title">Venha nos <span class="metallic-shine">Visitar</span></h2>
+            </div>
+            
+            <div class="localizacao-grid fade-in fade-delay-1">
+                <div class="local-info">
+                    <div class="local-item">
+                        <div class="local-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <div class="local-text">
+                            <h4>Endereço</h4>
+                            <p>Anil, Jacarepaguá<br>Rio de Janeiro - RJ</p>
+                        </div>
+                    </div>
+                    
+                    <div class="local-item">
+                        <div class="local-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                        <div class="local-text">
+                            <h4>Horário de Atendimento</h4>
+                            <p>Terça a Sábado<br>09:00 às 18:00</p>
+                        </div>
+                    </div>
+                    
+                    <div class="local-item">
+                         <!-- Botão para abrir no Google Maps -->
+                        <a href="https://www.google.com/maps/search/?api=1&query=Anil+Jacarepagua" target="_blank" class="btn btn-outline" style="margin-top: 10px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                            </svg>
+                            Abrir no GPS
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="map-frame">
+                    <!-- IFRAME DO GOOGLE MAPS -->
+                    <!-- Para trocar: Vá no Google Maps, pesquise seu endereço, clique em Compartilhar -> Incorporar um mapa, copie o link dentro de src="..." e cole aqui -->
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14697.584989178303!2d-43.3499708!3d-22.9563811!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9bd83017a42161%3A0x7d01878d655f0131!2sAnil%2C%20Rio%20de%20Janeiro%20-%20RJ!5e0!3m2!1spt-BR!2sbr!4v1709230000000!5m2!1spt-BR!2sbr" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- CTA Final -->
     <section class="cta-final section">
@@ -1336,6 +1467,27 @@
                     <a href="https://wa.me/5521998841148" target="_blank" rel="noopener" aria-label="WhatsApp">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="footer-info">
+                    <p>📍 Anil, Jacarepaguá - Rio de Janeiro</p>
+                    <p>📞 <a href="https://wa.me/5521998841148">(21) 99884-1148</a></p>
+                </div>
+
+                <p class="footer-credit">Criado por <strong>PS8 Company</strong></p>
+                <div class="footer-copyright" id="copyright">
+                    © 2025 Esmalteria Jeniffer Silva. Todos os direitos reservados.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp -->
+    <button class="whatsapp-float" id="whatsappFloat" onclick="openModal()">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                         </svg>
                     </a>
                 </div>
