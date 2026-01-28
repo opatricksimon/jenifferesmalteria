@@ -2239,30 +2239,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const player = new Vimeo.Player(iframe);
 
+    // Toggle Play/Pause no clique
     btn.addEventListener('click', async () => {
       try {
-        // pausa os outros vídeos (opcional, ajuda muito)
-        wraps.forEach(other => {
-          if (other !== wrap) {
-            const otherIframe = other.querySelector('iframe');
-            const otherBtn = other.querySelector('.vimeo-play');
-            if (otherIframe) new Vimeo.Player(otherIframe).pause().catch(()=>{});
-            if (otherBtn) otherBtn.style.display = '';
-          }
-        });
+        const paused = await player.getPaused();
 
-        await player.setMuted(false); // liga o som
-        await player.setVolume(1);    // volume 100%
-        await player.play();
+        if (paused) {
+          // pausa os outros vídeos (opcional)
+          wraps.forEach(other => {
+            if (other !== wrap) {
+              const otherIframe = other.querySelector('iframe');
+              if (otherIframe) new Vimeo.Player(otherIframe).pause().catch(()=>{});
+            }
+          });
 
-        btn.style.display = 'none';
+          await player.setMuted(false); // som ligado ao dar play
+          await player.setVolume(1);
+          await player.play();
+
+          // esconde o botão enquanto toca (se você quiser sempre visível, apaga essa linha)
+          btn.style.display = 'none';
+        } else {
+          await player.pause();
+          // mostra o botão quando pausa
+          btn.style.display = '';
+        }
       } catch (e) {
-        console.log('Erro ao dar play:', e);
+        console.log('Erro no toggle play/pause:', e);
       }
     });
 
+    // Se o usuário pausar por outros meios (atalhos etc), mostra o botão
     player.on('pause', () => btn.style.display = '');
     player.on('ended', () => btn.style.display = '');
+    player.on('play', () => btn.style.display = 'none');
   });
 });
 </script>
