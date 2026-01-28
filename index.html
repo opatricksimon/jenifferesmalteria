@@ -1504,6 +1504,67 @@
                 padding: clamp(60px, 10vw, 100px) 0;
             }
         }
+        .video-wrapper{
+  position: relative;
+}
+
+/* garante que o iframe não fique por cima do botão */
+.video-wrapper iframe{
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.vimeo-play{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+
+  width: 86px;
+  height: 86px;
+  border-radius: 999px;
+  border: 0;
+  cursor: pointer;
+
+  /* “brilhante” */
+  background: linear-gradient(135deg, #ffffff 0%, #cfcfcf 25%, #ffffff 50%, #9a9a9a 75%, #ffffff 100%);
+  box-shadow: 0 12px 35px rgba(0,0,0,.35), 0 0 20px rgba(255,255,255,.35);
+  overflow: hidden;
+}
+
+/* efeito de brilho passando */
+.vimeo-play::after{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.9) 50%, transparent 65%);
+  transform: translateX(-60%);
+  animation: shine 1.6s infinite;
+}
+
+@keyframes shine{
+  0%{ transform: translateX(-60%) rotate(10deg); opacity:.2; }
+  50%{ opacity:.8; }
+  100%{ transform: translateX(60%) rotate(10deg); opacity:.2; }
+}
+
+/* ícone play */
+.vimeo-play__icon{
+  position: absolute;
+  left: 53%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 0; height: 0;
+  border-left: 22px solid #111;
+  border-top: 14px solid transparent;
+  border-bottom: 14px solid transparent;
+  z-index: 2; /* acima do brilho */
+}
+        
     </style>
 </head>
 <body>
@@ -2117,5 +2178,31 @@
         updateWhatsAppFloat();
     </script>
 
+    <script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.video-wrapper').forEach((wrap) => {
+    const iframe = wrap.querySelector('iframe');
+    const btn = wrap.querySelector('.vimeo-play');
+    const player = new Vimeo.Player(iframe);
+
+    btn.addEventListener('click', async () => {
+      try {
+        await player.setVolume(1);     // volume 100%
+        await player.setMuted(false);  // tira o mute
+        await player.play();           // dá play
+        btn.style.display = 'none';    // esconde o botão
+      } catch (e) {
+        console.log('Erro ao dar play:', e);
+      }
+    });
+
+    // se pausar/terminar, volta o botão
+    player.on('pause', () => btn.style.display = '');
+    player.on('ended', () => btn.style.display = '');
+  });
+});
+</script>
+    
 </body>
 </html>
